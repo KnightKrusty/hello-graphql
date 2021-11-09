@@ -1,54 +1,17 @@
-export let movies = [
-  {
-    id: 1,
-    name: "NOLAN",
-    score: 1,
-  },
-  {
-    id: 2,
-    name: "Spiderman",
-    score: 8,
-  },
-  {
-    id: 3,
-    name: "Lucy",
-    score: 199,
-  },
-  {
-    id: 4,
-    name: "The Guy",
-    score: 14,
-  },
-  {
-    id: 5,
-    name: "Yes man",
-    score: 5,
-  },
-];
+import fetch from "node-fetch";
 
-export const getMovies = () => movies;
+const API_URL = "https://yts.proxyninja.org/api/v2/list_movies.json";
 
-export const getById = (id) => {
-  const filterMovies = movies.filter((movie) => id === movie.id);
-  return filterMovies[0];
-};
-
-export const deleteMovie = (id) => {
-  const cleanedMovies = movies.filter((movie) => movie.id != id);
-  if (movies.length > cleanedMovies.length) {
-    movies = cleanedMovies;
-    return true;
-  } else {
-    return false;
+export const getMovies = (limit, rating) => {
+  let REQUEST_URL = API_URL;
+  if (limit > 0) {
+    REQUEST_URL += `?limit=${limit}`;
   }
-};
-
-export const addMovie = (name, score) => {
-  const newMovie = {
-    id: movies.length + 1,
-    name,
-    score,
-  };
-  movies.push(newMovie);
-  return newMovie;
+  if (rating > 0) {
+    REQUEST_URL +=
+      limit > 0 ? `&minimum_rating=${rating}` : `?minimum_rating=${rating}`;
+  }
+  return fetch(REQUEST_URL)
+    .then((res) => res.json())
+    .then((json) => json.data.movies);
 };
